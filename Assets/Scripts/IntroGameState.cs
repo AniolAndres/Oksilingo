@@ -6,21 +6,33 @@ namespace Scripts
     public class IntroGameState : GameState
     {
         [SerializeField] 
-        private Button _button;
+        private Button _exerciseButton;
+        
+        [SerializeField]
+        private Button _helpButton;
 
         private void OnEnable()
         {
-            _button.onClick.AddListener(HandleButtonClick);
+            _exerciseButton.onClick.AddListener(HandleExerciseClicked);
+            _helpButton.onClick.AddListener(HandleHelpClicked);
         }
 
         private void OnDisable()
         {
-            _button.onClick.RemoveListener(HandleButtonClick);
+            _exerciseButton.onClick.RemoveListener(HandleExerciseClicked);
+            _helpButton.onClick.RemoveListener(HandleHelpClicked);
         }
 
-        private void HandleButtonClick()
+        private void HandleExerciseClicked()
         {
             FireChangeEvent(GameStateType.Exercise);
+            AudioManager.Instance.PlayAudio(AudioType.Click);
+        }
+        
+        private void HandleHelpClicked()
+        {
+            FireChangeEvent(GameStateType.Help);
+            AudioManager.Instance.PlayAudio(AudioType.Click);
         }
         
         public override void OnEnter()

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -17,11 +19,21 @@ namespace Scripts
         [SerializeField] 
         private List<GenericButtonExercise> _rightButtons;
         
+        [SerializeField]
+        private PlayableDirector _winDirector;
+        
+        [SerializeField]
+        GameObject _winPanel;
+        
         Dictionary<string,string> _pairs;
 
         private GenericButtonExercise _selectedOption;
 
         public event Action<bool> OnExerciseCompleted;
+
+        private int _completed = 0;
+        
+        Coroutine _coroutine;
         
         public void OnEnable()
         {
@@ -56,6 +68,12 @@ namespace Scripts
         private void HandleBackButtonClicked()
         {
             OnExerciseCompleted?.Invoke(false);
+
+            if (_coroutine != null)
+            {
+                StopCoroutine(_coroutine);
+                _coroutine = null;
+            }
         }
 
         private void HandleClick(GenericButtonExercise option)
@@ -64,7 +82,8 @@ namespace Scripts
             if (_selectedOption == null)
             {
                 _selectedOption = option;
-                _selectedOption.SetState(ButtonState.Selected);
+                _selectedOption.SetState(ButtonState.Selected); 
+                AudioManager.Instance.PlayAudio(AudioType.Click);
                 return;
             }
 
@@ -74,6 +93,7 @@ namespace Scripts
                 _selectedOption.SetState(ButtonState.Idle);
                 _selectedOption = option;
                 _selectedOption.SetState(ButtonState.Selected);
+                AudioManager.Instance.PlayAudio(AudioType.Click);
                 return;
             }
 
@@ -93,14 +113,18 @@ namespace Scripts
                 }
             }
 
-            ShowError();
+            ShowError(option);
         }
 
-        private void ShowError()
+        private void ShowError(GenericButtonExercise option)
         {
+            option.Shake();
+            _selectedOption.Shake();
+            
             _selectedOption.SetState(ButtonState.Idle);
             Debug.LogError(_selectedOption.Text);
             _selectedOption = null;
+            AudioManager.Instance.PlayAudio(AudioType.Error);
         }
 
         private void SetAsCompleted(GenericButtonExercise option)
@@ -108,12 +132,29 @@ namespace Scripts
             _selectedOption.SetState(ButtonState.Completed);
             option.SetState(ButtonState.Completed);
             _selectedOption = null;
+
+            _completed++;
+            AudioManager.Instance.PlayAudio(AudioType.Win);
+
+            if (_completed >= _pairs.Count)
+            {
+                _coroutine = StartCoroutine(DelayedWin());
+            }
+        }
+
+        private IEnumerator DelayedWin()
+        {
+            _winDirector.Play();
+            AudioManager.Instance.PlayAudio(AudioType.Congratulation);
+            yield return new WaitForSeconds(3.0f);
             
             OnExerciseCompleted?.Invoke(true);
         }
 
         public void Setup(MatchPairsExercise exercise)
         {
+            _winPanel.SetActive(false);
+            
             _pairs = new Dictionary<string, string>();
 
             var pairs = new List<MatchPair>(exercise.MatchPairs);

@@ -9,7 +9,7 @@ namespace Scripts
         List<MenuButton> _buttons;
         
         [SerializeField]
-        GameObject _chooseExerciseLayout;
+        ChooseExerciseController _chooseExerciseLayout;
         
         [SerializeField]
         ExerciseController _exerciseController;
@@ -22,14 +22,9 @@ namespace Scripts
             }
 
             _exerciseController.OnExerciseCompleted += HandleExerciseCompleted;
-
+            _chooseExerciseLayout.OnBack += HandleBack;
         }
 
-        private void HandleExerciseCompleted(bool completed)
-        {
-            _chooseExerciseLayout.SetActive(true);
-            _exerciseController.gameObject.SetActive(false);
-        }
 
         private void OnDisable()
         {
@@ -39,18 +34,30 @@ namespace Scripts
             }
             
             _exerciseController.OnExerciseCompleted -= HandleExerciseCompleted;
+            _chooseExerciseLayout.OnBack -= HandleBack;
+        }
+        
+        private void HandleBack()
+        {
+            FireChangeEvent(GameStateType.Main);
+        }
+        
+        private void HandleExerciseCompleted(bool completed)
+        {
+            _chooseExerciseLayout.gameObject.SetActive(true);
+            _exerciseController.gameObject.SetActive(false);
         }
 
         private void HandleButtonClick(MatchPairsExercise exercise)
         {
             _exerciseController.gameObject.SetActive(true);
-            _chooseExerciseLayout.SetActive(false);
+            _chooseExerciseLayout.gameObject.SetActive(false);
             _exerciseController.Setup(exercise);
         }
 
         public override void OnEnter()
         {
-            _chooseExerciseLayout.SetActive(true);
+            _chooseExerciseLayout.gameObject.SetActive(true);
             _exerciseController.gameObject.SetActive(false);
         }
 

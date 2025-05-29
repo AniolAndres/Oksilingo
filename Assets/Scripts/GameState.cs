@@ -32,6 +32,7 @@ namespace Scripts
     {
         Main,
         Exercise,
+        Help,
     }
 
 }

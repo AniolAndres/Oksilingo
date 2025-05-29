@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.UI;
 
 namespace Scripts
@@ -25,6 +26,9 @@ namespace Scripts
         [SerializeField] 
         private bool _isLeft;
 
+        [SerializeField] private PlayableDirector _shakeDirector;
+        [SerializeField] private PlayableDirector _pressDirector;
+
         public bool IsLeft => _isLeft;
 
         public event Action<GenericButtonExercise> OnClicked;
@@ -37,6 +41,11 @@ namespace Scripts
         {
             _textComponent.SetText(text);
             _text = text;
+        }
+
+        public void Shake()
+        {
+            _shakeDirector.Play();   
         }
         
         public void SetState(ButtonState state)
@@ -78,6 +87,7 @@ namespace Scripts
         private void OnButtonClick()
         {
             OnClicked?.Invoke(this);
+            _pressDirector.Play();
         }
     }
 
