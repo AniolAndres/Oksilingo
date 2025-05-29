@@ -1,36 +1,62 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Scripts
 {
     public class ExerciseGameState : GameState
     {
-        [SerializeField] 
-        private Button _button;
-
+        [SerializeField]
+        List<MenuButton> _buttons;
+        
+        [SerializeField]
+        GameObject _chooseExerciseLayout;
+        
+        [SerializeField]
+        ExerciseController _exerciseController;
+        
         private void OnEnable()
         {
-            _button.onClick.AddListener(HandleButtonClick);
+            foreach (var button in _buttons)
+            {
+                button.OnClick += HandleButtonClick;
+            }
+
+            _exerciseController.OnExerciseCompleted += HandleExerciseCompleted;
+
+        }
+
+        private void HandleExerciseCompleted(bool completed)
+        {
+            _chooseExerciseLayout.SetActive(true);
+            _exerciseController.gameObject.SetActive(false);
         }
 
         private void OnDisable()
         {
-            _button.onClick.RemoveListener(HandleButtonClick);
+            foreach (var button in _buttons)
+            {
+                button.OnClick -= HandleButtonClick;
+            }
+            
+            _exerciseController.OnExerciseCompleted -= HandleExerciseCompleted;
         }
 
-        private void HandleButtonClick()
+        private void HandleButtonClick(MatchPairsExercise exercise)
         {
-            FireChangeEvent(GameStateType.Main);
+            _exerciseController.gameObject.SetActive(true);
+            _chooseExerciseLayout.SetActive(false);
+            _exerciseController.Setup(exercise);
         }
 
         public override void OnEnter()
         {
-            
+            _chooseExerciseLayout.SetActive(true);
+            _exerciseController.gameObject.SetActive(false);
         }
 
         public override void OnExit()
         {
+            
         }
     }
 }

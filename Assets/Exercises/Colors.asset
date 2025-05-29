@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1d42116fb2b494e94059a3ea4770f99, type: 3}
+  m_Name: Colors
+  m_EditorClassIdentifier: 
+  _matchPairs:
+  - First: Blanc
+    Second: White
+  - First: Negre
+    Second: Black
+  - First: Groc
+    Second: Yellow
+  - First: Verd
+    Second: Green
+  - First: Blau
+    Second: Blue
+  - First: Vermell
+    Second: Red
+  - First: Taronja
+    Second: Orange
+  - First: Lila
+    Second: Purple
+  - First: Rosa
+    Second: Pink
+  - First: Gris
+    Second: Gray
+  - First: "Marr\xF3"
+    Second: Brown
